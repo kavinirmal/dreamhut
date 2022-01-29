@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">DesignHut</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="description">Convert Figma designs to mobile code with Monday Hero. Here is a template Travel App for it.</string>
+</resources>
