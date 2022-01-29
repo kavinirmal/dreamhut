@@ -34,6 +34,7 @@ public class FragmentActivity extends AppCompatActivity {
         bottom_nav.setOnClickMenuListener(new MeowBottomNavigation.ClickListener() {
             @Override
             public void onClickItem(MeowBottomNavigation.Model item) {
+                //actions
 
             }
         });
