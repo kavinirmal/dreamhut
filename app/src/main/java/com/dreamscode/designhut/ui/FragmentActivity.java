@@ -42,6 +42,8 @@ public class FragmentActivity extends AppCompatActivity {
         bottom_nav.setOnReselectListener(new MeowBottomNavigation.ReselectListener() {
             @Override
             public void onReselectItem(MeowBottomNavigation.Model item) {
+                //action
+
 
             }
         });
