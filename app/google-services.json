@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "251455846110",
+    "project_id": "loginapplication-e5374",
+    "storage_bucket": "loginapplication-e5374.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:251455846110:android:b1a2165f48f55c687e744f",
+        "android_client_info": {
+          "package_name": "com.dreamscode.designhut"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "251455846110-po7vevkb8q10itp2f0kknf3kd0rmbdip.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGKiVSu9ImLPfC-V9669hFHQ5_hQgTTuU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "251455846110-po7vevkb8q10itp2f0kknf3kd0rmbdip.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
