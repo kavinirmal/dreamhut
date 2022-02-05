@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".onboarding_ui.LoginActivity"
-    android:background="@drawable/main_bg">
+    android:background="@drawable/main_bg"
+    android:id="@+id/constraintLayout">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,6 +77,7 @@
             android:background="@drawable/onboard_input_bg" />
 
         <TextView
+            android:id="@+id/tv_forget_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Forget Password?"

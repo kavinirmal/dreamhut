@@ -11,11 +11,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dreamscode.designhut.R;
+import com.dreamscode.designhut.ui.FragmentActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     Animation topAnim, bottomAnim;
     ImageView img_logo;
     TextView tv_powered;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

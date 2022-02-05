@@ -10,9 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DesignHut">
         <activity
+            android:name=".ui.ForgetPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.FragmentActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan|adjustResize"/>
+            android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
             android:name=".onboarding_ui.LoginActivity"
             android:exported="false" />
