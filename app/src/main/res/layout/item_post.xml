@@ -13,7 +13,7 @@
         android:layout_marginLeft="25dp"
         android:layout_marginTop="10dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/sample_photo"
+        android:src="@drawable/ic_user"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="80dp"
         android:layout_marginRight="25dp"
-        android:text="Kavi Nirmal"
+        android:text=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/img_user" />
@@ -37,6 +37,7 @@
         android:layout_marginLeft="80dp"
         android:layout_marginRight="25dp"
         android:text="10 minutes ago"
+        app:layout_constraintBottom_toBottomOf="@+id/img_user"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />
@@ -49,7 +50,6 @@
         android:layout_marginLeft="25dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="25dp"
-        android:text="@string/description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_time" />
@@ -62,7 +62,6 @@
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/sample_cover"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_description" />

@@ -64,27 +64,32 @@ public class ForgetPasswordActivity extends AppCompatActivity {
 
     private void SendResetLink() {
         String email = et_email.getText().toString();
-        FirebaseAuth.getInstance().sendPasswordResetEmail(email)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            snackbar = Snackbar.make(constraintLayout,"Reset Link send to your email",Snackbar.LENGTH_LONG)
-                                    .setAction("Dismiss", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            snackbar.dismiss();
-                                        }
-                                    });
-                            snackbar.setActionTextColor(Color.CYAN);
-                            snackbar.show();
+        if (email.isEmpty()){
+            et_email.setError("Please enter your email...!");
+        }else {
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                snackbar = Snackbar.make(constraintLayout,"Reset Link send to your email",Snackbar.LENGTH_LONG)
+                                        .setAction("Dismiss", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                snackbar.dismiss();
+                                            }
+                                        });
+                                snackbar.setActionTextColor(Color.CYAN);
+                                snackbar.show();
+                            }
                         }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(ForgetPasswordActivity.this,"Error occurred please try again...!",Toast.LENGTH_SHORT).show();
-            }
-        });
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(ForgetPasswordActivity.this,"Error occurred please try again...!",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 }

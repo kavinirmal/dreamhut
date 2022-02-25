@@ -1,54 +1,46 @@
 package com.dreamscode.designhut.dto;
 
+import android.net.Uri;
+
 public class PostDto {
-    int img_user,img_post;
-    String user_name,time,description;
+    String PostDescription,postId,UserId,DateTime;
 
-    public PostDto(int img_user, int img_post, String user_name, String time, String description) {
-        this.img_user = img_user;
-        this.img_post = img_post;
-        this.user_name = user_name;
-        this.time = time;
-        this.description = description;
+    public PostDto(String postDescription, String postId, String userId, String dateTime) {
+        PostDescription = postDescription;
+        this.postId = postId;
+        UserId = userId;
+        DateTime = dateTime;
     }
 
-    public int getImg_user() {
-        return img_user;
+    public String getPostDescription() {
+        return PostDescription;
     }
 
-    public void setImg_user(int img_user) {
-        this.img_user = img_user;
+    public void setPostDescription(String postDescription) {
+        PostDescription = postDescription;
     }
 
-    public int getImg_post() {
-        return img_post;
+    public String getPostId() {
+        return postId;
     }
 
-    public void setImg_post(int img_post) {
-        this.img_post = img_post;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getUserId() {
+        return UserId;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setUserId(String userId) {
+        UserId = userId;
     }
 
-    public String getTime() {
-        return time;
+    public String getDateTime() {
+        return DateTime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDateTime(String dateTime) {
+        DateTime = dateTime;
     }
 }

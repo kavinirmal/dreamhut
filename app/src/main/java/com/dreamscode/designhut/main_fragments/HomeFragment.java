@@ -1,18 +1,37 @@
 package com.dreamscode.designhut.main_fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.dreamscode.designhut.R;
 import com.dreamscode.designhut.adapters.PostAdapter;
+import com.dreamscode.designhut.created_view.PopUpClass;
 import com.dreamscode.designhut.dto.PostDto;
+import com.dreamscode.designhut.ui.ForgetPasswordActivity;
+import com.dreamscode.designhut.ui.ImageViewActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +45,8 @@ public class HomeFragment extends Fragment implements PostAdapter.PostViewHolder
     RecyclerView rv_post;
     PostAdapter postAdapter;
     List<PostDto> mData;
+    FirebaseFirestore fStore;
+    ProgressBar progress;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -74,27 +95,52 @@ public class HomeFragment extends Fragment implements PostAdapter.PostViewHolder
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         rv_post = view.findViewById(R.id.rv_post);
+        progress = view.findViewById(R.id.progress);
+        fStore = FirebaseFirestore.getInstance();
+
+        progress.setIndeterminate(true);
+        progress.setVisibility(View.VISIBLE);
         loadPosts();
         return view;
     }
 
     private void loadPosts() {
-        mData = new ArrayList<>();
-        mData.add(new PostDto(R.drawable.sample_photo,R.drawable.sample_cover,"Kavishka Nirmal","10 minutes ago",getResources().getString(R.string.description)));
-        mData.add(new PostDto(R.drawable.sample_photo,R.drawable.sample_cover,"Alen Walker","10 minutes ago",getResources().getString(R.string.description)));
-        mData.add(new PostDto(R.drawable.sample_photo,R.drawable.sample_cover,"Upeksha Godage","10 minutes ago",getResources().getString(R.string.description)));
-        mData.add(new PostDto(R.drawable.sample_photo,R.drawable.sample_cover,"Kavishka Nirmal","10 minutes ago",getResources().getString(R.string.description)));
-        mData.add(new PostDto(R.drawable.sample_photo,R.drawable.sample_cover,"Kavishka Nirmal","10 minutes ago",getResources().getString(R.string.description)));
-        mData.add(new PostDto(R.drawable.sample_photo,R.drawable.sample_cover,"Kavishka Nirmal","10 minutes ago",getResources().getString(R.string.description)));
-        mData.add(new PostDto(R.drawable.sample_photo,R.drawable.sample_cover,"Kavishka Nirmal","10 minutes ago",getResources().getString(R.string.description)));
+        fStore.collection("Post").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    mData = new ArrayList<>();
+                    for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
+                        //description ok
+                        String PostDescription = documentSnapshot.getData().get("PostDescription").toString();
+                        String DateAndTime = documentSnapshot.getData().get("DateTime").toString();
+                        String postId = documentSnapshot.getId().toString();
+                        String UserId = documentSnapshot.getData().get("UserId").toString();
+                        mData.add(new PostDto(PostDescription,postId,UserId,DateAndTime));
+                    }
+                    postAdapter = new PostAdapter(getContext(),mData,HomeFragment.this::onClickListener);
+                    rv_post.setAdapter(postAdapter);
+                    rv_post.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    progress.setVisibility(View.INVISIBLE);
 
-        postAdapter = new PostAdapter(getContext(),mData,this::onClickListener);
-        rv_post.setAdapter(postAdapter);
-        rv_post.setLayoutManager(new LinearLayoutManager(getActivity()));
+                }else {
+                    Toast.makeText(getContext(),"Error occurred...!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(),"Error occurred...!",Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override
     public void onClickListener(int position) {
+
+//        PopUpClass popUpClass = new PopUpClass();
+//        popUpClass.showPopupWindow(getView());
 
     }
 }

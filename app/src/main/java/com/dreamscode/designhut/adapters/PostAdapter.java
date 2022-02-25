@@ -1,20 +1,42 @@
 package com.dreamscode.designhut.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dreamscode.designhut.R;
 import com.dreamscode.designhut.created_view.RoundCornerImageView;
 import com.dreamscode.designhut.dto.PostDto;
+import com.dreamscode.designhut.main_fragments.HomeFragment;
+import com.dreamscode.designhut.ui.ImageViewActivity;
+import com.dreamscode.designhut.ui.MyHutActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -22,6 +44,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     Context mContext;
     List<PostDto> mData;
+    FirebaseFirestore fStore;
+    StorageReference user_storage;
+    StorageReference post_storage;
+    Boolean check;
     private PostViewHolder.RecyclerViewClickListener clicklistener;
 
     public PostAdapter(Context mContext, List<PostDto> mData, PostViewHolder.RecyclerViewClickListener listener){
@@ -39,18 +65,154 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
-        holder.img_user.setImageResource(mData.get(position).getImg_user());
-        holder.img_post.setImageResource(mData.get(position).getImg_post());
-        holder.tv_user_name.setText(mData.get(position).getUser_name());
-        holder.tv_time.setText(mData.get(position).getTime());
-        holder.tv_description.setText(mData.get(position).getDescription());
+        fStore = FirebaseFirestore.getInstance();
 
+        String UserId = mData.get(position).getUserId().toString();
+        String PostId = mData.get(position).getPostId().toString();
+        String DateTime = mData.get(position).getDateTime().toString();
+        String Description = mData.get(position).getPostDescription().toString();
+
+        fStore = FirebaseFirestore.getInstance();
+
+        fStore.collection("Likes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
+                        String postId = documentSnapshot.getData().get("PostId").toString();
+                        String userId = documentSnapshot.getData().get("UserId").toString();
+                        if (postId.equals(PostId) && userId.equals(UserId)){
+                            check = true;
+                            break;
+                        }else {
+                            check=false;
+                        }
+
+                    }
+                    if (check){
+                        holder.img_like.setImageResource(R.drawable.ic_heart_select);
+                    }else {
+                        holder.img_like.setImageResource(R.drawable.ic_heart_not_select);
+                    }
+                }else {
+                    Toast.makeText(mContext,"Error occurred...!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(mContext,"Error occurred...!",Toast.LENGTH_SHORT).show();
+            }
+        });
+        fStore.collection("User").document(UserId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String username = (String) documentSnapshot.getData().get("UserName");
+                holder.tv_user_name.setText(username);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+        user_storage = FirebaseStorage.getInstance().getReference().child("profile_images/" + UserId);
+        user_storage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).into(holder.img_user);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+        post_storage = FirebaseStorage.getInstance().getReference().child("post_image/"+PostId);
+        post_storage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).into(holder.img_post);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
         holder.img_like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.img_like.setImageResource(R.drawable.ic_heart_select);
+                fStore.collection("Likes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot documentSnapshot:task.getResult()){
+                                String postId = documentSnapshot.getData().get("PostId").toString();
+                                String userId = documentSnapshot.getData().get("UserId").toString();
+                                String likesId= documentSnapshot.getId().toString();
+
+                                if (postId.equals(PostId) && userId.equals(UserId)){
+                                    //dislike
+                                    holder.img_like.setImageResource(R.drawable.ic_heart_not_select);
+                                    DocumentReference documentReference = fStore.collection("Likes").document(likesId);
+                                    Toast.makeText(mContext, "Disliked", Toast.LENGTH_SHORT).show();
+                                    documentReference.delete();
+                                    check = false;
+                                    break;
+                                }else {
+                                    check=true;
+                                }
+                            }
+                            if (check){
+                                holder.img_like.setImageResource(R.drawable.ic_heart_select);
+                                String likes_id = fStore.collection("Likes").document().getId();
+                                DocumentReference documentReference = fStore.collection("Likes").document(likes_id);
+                                Map<String,Object> post = new HashMap<>();
+                                post.put("UserId",UserId);
+                                post.put("PostId",PostId);
+                                documentReference.set(post).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(mContext, "Liked", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(mContext, "Try Again...", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }else {
+                            Toast.makeText(mContext,"Error occurred...!",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(mContext,"Error occurred...!",Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
+        holder.img_post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(mContext, ImageViewActivity.class);
+                intent.putExtra("PostId",PostId);
+                mContext.startActivity(intent);
+            }
+        });
+        holder.img_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(mContext, MyHutActivity.class);
+                intent.putExtra("UserId",UserId);
+                mContext.startActivity(intent);
+            }
+        });
+        holder.tv_time.setText(DateTime);
+        holder.tv_description.setText(Description);
 
     }
 
